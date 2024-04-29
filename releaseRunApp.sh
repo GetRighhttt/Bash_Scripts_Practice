@@ -35,6 +35,15 @@ _install_flutter() {
 	sh install_flutter.sh
 }
 
+_reinstall_flutter() {
+	cd Development/mobile.connected.smarthq.android/Cafe
+	cd SmartHQ_Flutter_Module/smarthq_flutter_module
+	git checkout develop
+	echo "Preparing to run install script again."
+	sleep 1
+	_install_flutter
+}
+
 _get_release_branch() {
         if [ -z "$release" ]; then
                 echo "The string is empty."
@@ -141,16 +150,17 @@ _run_commonframework_updates() {
 
 _run_develop_updates
 echo
+sleep 2
 echo "Switching to Flutter module..."
-sleep 2
 _run_flutter_updates
+cd -
+sleep 2
 echo "Switching to Commonframework..."
-cd -
-sleep 2
 _run_commonframework_updates
-sleep 2
 cd -
+sleep 2
 echo
+_reinstall_flutter
 
 if test $? -eq 0; then
 	echo "Script finished running successfully!"
