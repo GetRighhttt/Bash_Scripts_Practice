@@ -1,38 +1,39 @@
 #!/bin/bash
 
 # Script serves as develop and release clean build pattern for Android.
+# Initial Start
 
 cd Development/mobile.connected.smarthq.android/Cafe
-
+ 
 if test $? -ne 0; then
         echo "ERROR: Failed to change directories properly."
         sleep 2
         echo "Exiting.."
-	# 'exit 1' error code means syntax error. Used frequently...
+        # 'exit 1' error code means syntax error. Used frequently...
         exit 1
 else echo "SUCCESS: Changed directories successfully."
         echo "Continuing.."
-fi 
+fi
+                
+echo "Enter current release: "
+read release
 
 # Method Declarations
 
+_pull_changes() {
+        git reset --hard
+        git clean -fxd
+        git pull
+} 
+
 _update_develop() {
 	git checkout develop
-	git reset --hard
-	git clean -fxd
-}
-
-_pull_changes() {
-	git pull
+	_pull_changes
 }
 
 _install_flutter() {
 	sh install_flutter.sh
 }
-
-
-echo "Enter current release: "
-read release
 
 _get_release_branch() {
         if [ -z "$release" ]; then
@@ -51,8 +52,6 @@ _get_release_branch() {
 
 _update_release_branch() {
 	_get_release_branch
-	git reset --hard
-	git clean -fxd
 	_pull_changes
 	
 	if test $? -eq 0; then
@@ -68,87 +67,89 @@ _update_release_branch() {
 	echo
 }
 
-_update_develop
-_pull_changes
+_run_develop_updates() {
+	_update_develop
+	if test $? -eq 0; then
+        	echo "SUCCESS: Changes successfully pulled into develop."
+	else
+        	echo "ERROR: Changes could not be pulled into develop."
+        	echo "Exiting.."
+	exit 1
+	fi
 
-if test $? -eq 0; then
-	echo "SUCCESS: Changes successfully pulled into develop."
-else 
-	echo "ERROR: Changes could not be pulled into develop."
-	echo "Exiting.."
-exit 1
-fi
+	_update_release_branch
+}
 
-_update_release_branch
+_run_flutter_updates() {
+	_update_develop
+ 
+        if test $? -eq 0; then
+                echo "SUCCESS: Flutter module successfully pulled in changes."
+        else
+                echo "ERROR: There was an error when pulling changes from flutter module..."
+                echo "Exiting.."
+        exit 1
+        fi
+ 
+        sleep 1
+        echo "Preparing to install dependencies..."
+        sleep 2
+ 
+        echo "Installing..."
+        echo "Should take 35-40 seconds..."
+        sleep 1
+ 
+        SECONDS=0
+ 
+        _install_flutter
+ 
+        if test $? -eq 0; then
+                echo "SUCCESS: Flutter module successfully installed dependencies."
+        else
+                echo "ERROR: There was an error updating flutter module..."
+                echo "Exiting.."
+                exit 1
+        fi
+ 
+        echo "Time elapsed: $SECONDS seconds."
+        echo
+        echo
+ 
+        _update_release_branch
+}
 
+_run_commonframework_updates() {
+	_update_develop
+	        
+	if test $? -eq 0; then
+        	echo "SUCCESS: Commonframework has successfully pulled in changes."
+	else
+        	echo "ERROR: Could not pull in changes into commonframework."
+        	echo "Exiting.."
+        	exit 1
+	fi        
+
+	_update_release_branch
+}
+
+
+
+
+# Begin Updates
+
+_run_develop_updates
 echo
-echo
-
 echo "Switching to Flutter module..."
 sleep 2
-
 cd SmartHQ_Flutter_Module/smarthq_flutter_module
-
-_update_develop
-_pull_changes
-
-if test $? -eq 0; then
-	echo "SUCCESS: Flutter module successfully pulled in changes."
-else 
-	echo "ERROR: There was an error when pulling changes from flutter module..."
-	echo "Exiting.."
-exit 1
-fi
-
-sleep 1
-echo "Preparing to install dependencies..."
-sleep 2
-
-echo "Installing..."
-echo "Should take 35-40 seconds..."
-sleep 1
-
-SECONDS=0
-
-_install_flutter
-
-if test $? -eq 0; then
-	echo "SUCCESS: Flutter module successfully installed dependencies."
-else 
-	echo "ERROR: There was an error updating flutter module..."
-	echo "Exiting.."
-	exit 1
-fi
-
-echo "Time elapsed: $SECONDS seconds."
-echo
-echo
-
-_update_release_branch
-
+_run_flutter_updates
 echo "Switching to Commonframework..."
 cd -
 sleep 2
-
 cd app/src/main/java/com/ge/commonframework
-
-_update_develop
-_pull_changes
-
-if test $? -eq 0; then
-	echo "SUCCESS: Commonframework has successfully pulled in changes."
-else 
-	echo "ERROR: Could not pull in changes into commonframework."
-	echo "Exiting.."
-	exit 1
-fi
-
-_update_release_branch
-
+_run_commonframework_updates
 sleep 2
 cd -
-
-echo
 echo
 
 if test $? -eq 0; then
