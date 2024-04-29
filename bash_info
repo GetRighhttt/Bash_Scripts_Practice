@@ -1,0 +1,18 @@
+# WHAT IS BASH? 
+
+- Bash is an application that we call "shell" that allows users to interact with the Unix Computer operating system. When the bash shell is first opened up, you're greeted with a prompt that awaits the user input ($, -, etc.)
+- Bash is just an application that acts as a shell for Unix whose job is to run other applications using Linux commands given by a user.
+
+# WHAT IS BASH SCRIPTING?
+
+- A bash script is a file containing a sequence of commands that is executable by the bash application line by line.
+- Bash Scripting is the process of creating bash scripts.
+
+# WHAT IS BASH SCRIPTING USED FOR? 
+
+- Automation: automate repetitive tasks and processes, saving time and reducing the risk of errors that can occur.
+- Portability: shell scripts are portable and can be run on various devices and systems.
+- Flexibility: highly customizable and can be easily modified to suit requirements.
+- Accessibility: bash scripts are easily assessable and easy to write.
+- Integration: can easily be integrated with other tools, apps, and other technologies.
+- Debugging: easy to debug and most shells have built in debugging and error-reporting tools.
