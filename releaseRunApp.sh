@@ -81,6 +81,7 @@ _run_develop_updates() {
 }
 
 _run_flutter_updates() {
+	cd SmartHQ_Flutter_Module/smarthq_flutter_module
 	_update_develop
  
         if test $? -eq 0; then
@@ -119,6 +120,7 @@ _run_flutter_updates() {
 }
 
 _run_commonframework_updates() {
+	cd app/src/main/java/com/ge/commonframework
 	_update_develop
 	        
 	if test $? -eq 0; then
@@ -141,12 +143,10 @@ _run_develop_updates
 echo
 echo "Switching to Flutter module..."
 sleep 2
-cd SmartHQ_Flutter_Module/smarthq_flutter_module
 _run_flutter_updates
 echo "Switching to Commonframework..."
 cd -
 sleep 2
-cd app/src/main/java/com/ge/commonframework
 _run_commonframework_updates
 sleep 2
 cd -
