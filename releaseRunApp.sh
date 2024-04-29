@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script serves as generic build pattern for Android.
+# Script serves as develop and release clean build pattern for Android.
 
 cd Development/mobile.connected.smarthq.android/Cafe
 
@@ -16,7 +16,7 @@ fi
 
 # Method Declarations
 
-_clean_and_reset() {
+_update_develop() {
 	git checkout develop
 	git reset --hard
 	git clean -fxd
@@ -30,13 +30,23 @@ _install_flutter() {
 	sh install_flutter.sh
 }
 
+
 echo "Enter current release: "
-read release_branch
+read release
 
 _get_release_branch() {
+        if [ -z "$release" ]; then
+                echo "The string is empty."
+                echo "Aborting..."
+		exit1
+	else
+		echo "Release: $release."
+		echo "No errors found."
+        fi   
+
 	echo "Preparing to update release..."
         sleep 2
-	git checkout $release_branch
+	git checkout $release
 }
 
 _update_release_branch() {
@@ -58,7 +68,7 @@ _update_release_branch() {
 	echo
 }
 
-_clean_and_reset
+_update_develop
 _pull_changes
 
 if test $? -eq 0; then
@@ -79,7 +89,7 @@ sleep 2
 
 cd SmartHQ_Flutter_Module/smarthq_flutter_module
 
-_clean_and_reset
+_update_develop
 _pull_changes
 
 if test $? -eq 0; then
@@ -122,7 +132,7 @@ sleep 2
 
 cd app/src/main/java/com/ge/commonframework
 
-_clean_and_reset
+_update_develop
 _pull_changes
 
 if test $? -eq 0; then
