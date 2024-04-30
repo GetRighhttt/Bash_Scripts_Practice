@@ -1,1 +1,3 @@
+# README
+
 Bash Scripts practice
